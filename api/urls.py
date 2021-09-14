@@ -20,7 +20,7 @@ urlpatterns = [
     path('question/<int:question_id>/user', question_view.question_user),
 
     path('user/create', user_views.create_user),
-    path('users/<int:page_id>', user_views.users),
+    path('users/', user_views.users),
     path('user/<str:username>', user_views.user),
     path('user/<str:username>/username', user_views.user_username),
     path('user/<str:username>/password', user_views.user_password),

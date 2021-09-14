@@ -116,8 +116,8 @@ class User:
         }
 
     @staticmethod
-    def get_user_profile(username: str, params: str):
-        url = BASE_URL + f'user/{username}/profile{params}'
+    def get_user_profile(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=profile'
         response = requests.get(url, headers=header)
         return {
             'status_code': response.status_code,
@@ -125,24 +125,49 @@ class User:
         }
 
     @staticmethod
-    def get_user_activity(username: str, params: str):
-        pass
+    def get_user_profile_activity(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=activity'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
 
     @staticmethod
-    def get_user_edit(username: str, params: str):
-        pass
+    def get_user_profile_edit(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=edit'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
 
     @staticmethod
-    def get_user_answers(username: str, params: str):
-        pass
+    def get_user_profile_answers(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=answers'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
 
     @staticmethod
-    def get_user_questions(username: str, params: str):
-        pass
+    def get_user_profile_questions(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=questions'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
 
     @staticmethod
-    def get_user_tags(username: str, params: str):
-        pass
+    def get_user_profile_tags(username: str):
+        url = BASE_URL + f'user/{username}/profile?tab=tags'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
 
 
 class Question:

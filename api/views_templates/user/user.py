@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator
 from django.shortcuts import redirect
 from django.core.serializers import serialize
 
@@ -39,13 +38,11 @@ def user(request: HttpRequest, username):
 
 @csrf_exempt
 @require_http_methods(['GET'])
-def users(request: HttpRequest, page_num):
+def users(request: HttpRequest):
     if not check_token(request):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
-    users = User.objects.all()
-    paginator = Paginator(users, USERS_PER_PAGE)
-    page = serialize(FORMAT, [ *paginator.get_page(page_num) ])
-    return HttpResponse(status=OK_STATUS, content=positive_response(page))
+    if request.method == 'GET':
+        return user_handlers.get_users(request)
 
 @csrf_exempt
 @require_http_methods(['PUT'])

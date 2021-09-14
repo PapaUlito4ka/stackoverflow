@@ -25,24 +25,45 @@ class UserRequests:
 
     @staticmethod
     def user_profile(request: HttpRequest, context, username):
-        response = User.get_user(username)
+        response = User.get_user_profile(username)
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
-        return handle_profile(request, 'core/profile.html', response, context)
+        return handle_profile(request, 'core/profile/profile.html', response, context)
 
     @staticmethod
-    def user_activity(request: HttpRequest, context, username):
-        response = User.get_user(username)
+    def user_profile_activity(request: HttpRequest, context, username):
+        response = User.get_user_profile_activity(username)
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
-        return handle_profile(request, 'core/activity.html', response, context)
+        return handle_profile(request, 'core/profile/activity.html', response, context)
 
     @staticmethod
-    def user_edit(request: HttpRequest, context, username):
-        response = User.get_user(username)
+    def user_profile_edit(request: HttpRequest, context, username):
+        response = User.get_user_profile_edit(username)
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
-        return handle_profile(request, 'core/edit.html', response, context)
+        return handle_profile(request, 'core/profile/edit.html', response, context)
+
+    @staticmethod
+    def user_profile_answers(request: HttpRequest, context, username):
+        response = User.get_user_profile_answers(username)
+        if check_error(response):
+            return handle_error(request, 'core/not_found.html', response, context)
+        return handle_profile(request, 'core/profile/answers.html', response, context)
+
+    @staticmethod
+    def user_profile_questions(request: HttpRequest, context, username):
+        response = User.get_user_profile_questions(username)
+        if check_error(response):
+            return handle_error(request, 'core/not_found.html', response, context)
+        return handle_profile(request, 'core/profile/questions.html', response, context)
+
+    @staticmethod
+    def user_profile_tags(request: HttpRequest, context, username):
+        response = User.get_user_profile_tags(username)
+        if check_error(response):
+            return handle_error(request, 'core/not_found.html', response, context)
+        return handle_profile(request, 'core/profile/tags.html', response, context)
 
     @staticmethod
     def register_user(request: HttpRequest, context, username, password):

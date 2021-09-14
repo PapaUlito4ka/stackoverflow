@@ -68,10 +68,16 @@ def profile(request: HttpRequest, username, tab=None):
         tab = request.GET.get('tab', None)
         if tab == 'profile':
             return handlers.UserRequests.user_profile(request, context, username)
-        if tab == 'activity':
-            return handlers.UserRequests.user_activity(request, context, username)
+        if tab in ('activity', 'summary'):
+            return handlers.UserRequests.user_profile_activity(request, context, username)
         if tab == 'edit':
-            return handlers.UserRequests.user_edit(request, context, username)
+            return handlers.UserRequests.user_profile_edit(request, context, username)
+        if tab == 'answers':
+            return handlers.UserRequests.user_profile_answers(request, context, username)
+        if tab == 'questions':
+            return handlers.UserRequests.user_profile_questions(request, context, username)
+        if tab == 'tags':
+            return handlers.UserRequests.user_profile_tags(request, context, username)
         return handlers.UserRequests.user_profile(request, context, username)
 
 

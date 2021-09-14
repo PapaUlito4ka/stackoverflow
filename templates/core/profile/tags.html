@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 d-flex p-0">
+                <a class="btn btn-sm btn-outline-dark me-3" href="{% url 'profile' user.username %}?tab=profile" role="button">Profile</a>
+                <a class="btn btn-sm btn-outline-warning me-3" href="#" role="button">Activity</a>
+                {% if session.username == user.username %}
+                    <a class="btn btn-sm btn-outline-dark" href="{% url 'profile' user.username %}?tab=edit" role="button">Edit profile</a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% block profile_content %}
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="d-flex flex-row p-0">
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=summary" role="button">Summary</a>
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=answers" role="button">Answers</a>
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=questions" role="button">Questions</a>
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile' user.username %}?tab=tags" role="button">Tags</a>
+                </div>
+                <p class="border-bottom my-2">{{ tags|length }} Tags</p>
+                {% for tag in tags %}
+                    <div class="d-flex flex-row">
+                        <p class="fs-5 ms-2 m-0"><a href="/tags/{{ tag.id }}">{{ tag.name|truncatechars:"30" }}</a></p>
+                    </div>
+                    <div class="border-bottom mb-2"></div>
+                {% endfor %}
+
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+

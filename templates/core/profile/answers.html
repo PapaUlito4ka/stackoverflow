@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 d-flex p-0">
+                <a class="btn btn-sm btn-outline-dark me-3" href="{% url 'profile' user.username %}?tab=profile" role="button">Profile</a>
+                <a class="btn btn-sm btn-outline-warning me-3" href="#" role="button">Activity</a>
+                {% if session.username == user.username %}
+                    <a class="btn btn-sm btn-outline-dark" href="{% url 'profile' user.username %}?tab=edit" role="button">Edit profile</a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% block profile_content %}
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="d-flex flex-row p-0">
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=summary" role="button">Summary</a>
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=answers" role="button">Answers</a>
+                    <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'profile' user.username %}?tab=questions" role="button">Questions</a>
+                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'profile' user.username %}?tab=tags" role="button">Tags</a>
+                </div>
+                <p class="border-bottom my-2">{{ answers|length }} Answers</p>
+                {% for answer in answers %}
+                    <div class="d-flex flex-row align-items-start">
+                        <div class="card px-2 mb-2"><p class="fs-5 m-0">{{ answer.likes }}</p></div>
+                        <p class="fs-5 mx-1 m-0"><a href="/question/{{ answer.question }}#{{ answer.id }}">{{ answer.text|truncatechars:"30" }}</a></p>
+                        <div class="flex-fill text-end">{{ answer.created_at }}</div>
+                    </div>
+                    <div class="border-bottom mb-2"></div>
+                {% endfor %}
+
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+

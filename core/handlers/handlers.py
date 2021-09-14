@@ -29,7 +29,10 @@ def check_user_password(response: dict, pwd: str):
 
 
 def handle_profile(request: HttpRequest, url: str, response: dict, context: dict):
-    context['user'] = response['data']
+    context = {
+        **context,
+        **response['data']
+    }
     return render(request, url, context=context)
 
 

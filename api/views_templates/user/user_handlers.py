@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpRequest
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Prefetch
 from django.forms.models import model_to_dict
+from django.core.paginator import Paginator
 
 from django.db import IntegrityError
 from api.handle_response import UserJson, QuestionJson, AnswerJson, TagJson
@@ -15,6 +16,22 @@ import json
 FORMAT = 'json'
 ERROR_STATUS = 403
 OK_STATUS = 200
+
+# USERS
+
+def get_users(request: HttpRequest):
+    users_per_page = 36
+    try:
+        page = int(request.GET.get('page', 1))
+    except Exception as e:
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
+    users = User.objects.all()
+    paginator = Paginator(users, users_per_page)
+    users_page = paginator.page(page)
+    users_serialized = [model_to_dict(user) for user in users_page]
+    return HttpResponse(status=OK_STATUS, content=positive_response(users_serialized))
+
+###########
 
 # USER
 
@@ -156,14 +173,14 @@ def user_profile_get(request: HttpRequest, username: str, tab: str):
             user = User.objects.get(username=username)
             questions = Question.objects \
                 .filter(user_id=user.pk)\
-                .order_by('-votes')[:5]
+                .order_by('-votes')
             answers = Answer.objects\
                 .filter(user_id=user.pk)\
-                .order_by('-likes')[:5]
+                .order_by('-likes')
             questions_ids = Question.objects\
                 .filter(user_id=user.pk)\
                 .values_list('tags')\
-                .distinct()[:5]
+                .distinct()
             tags = Tag.objects.filter(pk__in=questions_ids)
             serialized_data['user'] = model_to_dict(user)
             serialized_data['questions'] = []
@@ -204,7 +221,7 @@ def user_profile_get(request: HttpRequest, username: str, tab: str):
             serialized_data['user'] = model_to_dict(user)
             serialized_data['tags'] = [model_to_dict(tag) for tag in tags]
         elif tab == 'edit':
-            user = User.objects.get(useraname=username)
+            user = User.objects.get(username=username)
             serialized_data['user'] = model_to_dict(user)
         else:
             raise Exception(f'Tab "{tab}" does not exist')

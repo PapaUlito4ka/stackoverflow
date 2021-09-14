@@ -44,7 +44,7 @@
                         <p class="fs-3 text-muted">Top questions</p>
                     </div>
                     <div class="col-sm-8 card">
-                        {% for question in user.questions|slice:":3" %}
+                        {% for question in questions|slice:":3" %}
                             <p class="fs-5"><a href="/question/{{ question.id }}">{{ question.title }}</a></p>
                         {% endfor %}
                     </div>
@@ -60,7 +60,7 @@
                         <p class="fs-3 text-muted">Top answers</p>
                     </div>
                     <div class="col-sm-8 card">
-                        {% for answer in user.answers|slice:":5" %}
+                        {% for answer in answers|slice:":5" %}
                             <p class="fs-5"><a href="/question/{{ answer.question }}">{{ answer.text|truncatewords:20 }}</a></p>
                         {% endfor %}
                     </div>
