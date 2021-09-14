@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="col-lg-8 d-flex justify-content-center">
+        <form action="/login" method="post">
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.label }}" class="form-label">{{ field.label }}</label><br>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            {% if error is not None %}
+                <div class="form-text" style="color: #ff0000;">Wrong username or password</div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-lg-2"></div>
+{% endblock %}
+

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}All questions{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 p-0 list-group-flush">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2>All Questions</h2>
+                <p class="fs-4 fw-light">{{ questions|length }} questions</p>
+            </div>
+            <div class="col-lg-6 d-flex flex-column align-items-end justify-content-end">
+                <a href="{% url 'ask_question' %}" class="btn btn-primary mb-2">Ask question</a>
+                <a href="#" class="btn btn-secondary">Filters</a>
+            </div>
+        </div>
+        {% for question in questions %}
+        {% include "../includes/question_template.html" %}
+        {% endfor %}
+    </div>
+    <div class="col-sm-2"></div>
+{% endblock %}
+

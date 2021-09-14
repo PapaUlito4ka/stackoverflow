@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 d-flex p-0">
+                <a class="btn btn-outline-dark btn-sm me-3" href="{% url 'profile' user.username %}?tab=profile" role="button">Profile</a>
+                <a class="btn btn-outline-dark btn-sm me-3" href="{% url 'profile' user.username %}?tab=activity" role="button">Activity</a>
+                {% if user.username == session.username %}
+                    <a class="btn btn-outline-warning btn-sm" href="#" role="button">Edit profile</a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% block profile_content %}
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="{% static 'images/anonymous.jpg' %}" class="img-fluid rounded mb-2">
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="inputGroupFile02">
+                            <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-8 card">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label fw-bold">Display name</label>
+                            <input type="text" class="form-control" id="exampleFormControlInput1" value="{{ user.username }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlTextarea1" class="form-label fw-bold">About me</label>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" value="{{ user.about }}"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        <div class="col-sm-2"></div>
+        {% endblock %}
+    </div>
+{% endblock %}
+

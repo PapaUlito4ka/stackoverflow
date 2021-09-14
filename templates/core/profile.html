@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 d-flex p-0">
+                <a class="btn btn-outline-warning btn-sm me-3" href="#" role="button">Profile</a>
+                <a class="btn btn-outline-dark btn-sm me-3" href="{% url 'profile' user.username %}?tab=activity" role="button">Activity</a>
+                {% if session.username == user.username %}
+                    <a class="btn btn-outline-dark btn-sm" href="{% url 'profile' user.username %}?tab=edit" role="button">Edit profile</a>
+                {% endif %}
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% block profile_content %}
+        <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="{% static 'images/anonymous.jpg' %}" class="img-fluid rounded">
+                    </div>
+                    <div class="col-sm-8 card">
+                        <h2>{{ user.username }}</h2>
+                        {% if user.about == '' %}
+                            <p class="text-muted">Your "about" is currently empty</p>
+                        {% else %}
+                            <p>{{ user.about }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p class="fs-3 text-muted">Top questions</p>
+                    </div>
+                    <div class="col-sm-8 card">
+                        {% for question in user.questions|slice:":3" %}
+                            <p class="fs-5"><a href="/question/{{ question.id }}">{{ question.title }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 p-0">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p class="fs-3 text-muted">Top answers</p>
+                    </div>
+                    <div class="col-sm-8 card">
+                        {% for answer in user.answers|slice:":5" %}
+                            <p class="fs-5"><a href="/question/{{ answer.question }}">{{ answer.text|truncatewords:20 }}</a></p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+        </div>
+        {% endblock %}
+    </div>
+{% endblock %}
+

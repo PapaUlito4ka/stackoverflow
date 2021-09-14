@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Ask question{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8">
+        <div class="card">
+            <form action="/questions/ask" method="post" class="p-3">
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.label }}" class="form-label">{{ field.label }}</label><br>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Review question</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-2"></div>
+
+{% endblock %}
+

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="col-sm-8">
+        <div class="title border-bottom">
+            <h1>{{ question.title }}</h1>
+            <small class="text-muted">Asked {{ question.created_at }}</small>
+        </div>
+
+        <div class="body pb-4">
+            <div class="d-flex">
+                <div class="col-sm-1 d-flex flex-column text-center px-3">
+                    <button type="button" class="btn btn-light btn-lg p-0 my-2" onclick="updateQuestionVotes({{ question.id }}, 'up')">
+                        <i class="bi bi-arrow-up-circle"></i>
+                    </button>
+                    <p class="fs-4 m-0 text-center question-votes">{{ question.votes }}</p>
+                    <button type="button" class="btn btn-light btn-lg p-0 my-2" onclick="updateQuestionVotes({{ question.id }}, 'down')">
+                        <i class="bi bi-arrow-down-circle"></i>
+                    </button>
+                </div>
+                <div class="col-sm-11 px-2 pt-1">
+                    <p>{{ question.text }}</p>
+                    <div class="tags">
+                        {% for tag in question.tags %}
+                            <a class="btn btn-outline-info btn-sm" href="#" role="button">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end pb-2">
+                <div class="card d-flex flex-column p-2 bg-light">
+                    <small class="text-muted">asked {{ question.created_at }}</small>
+                    <div class="d-flex flex-row align-items-center justify-content-start">
+                        <img src="{% static question.user.img_path %}" class="rounded" alt="None" width="30" height="30">
+                        <a class="nav-link" href="{% url 'profile' question.user.username %}">{{ question.user.username }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="col-sm-1 d-flex flex-column text-center"></div>
+                <div class="col-sm-11 border-top px-2">
+                    <small class="text-muted"><a class="link-secondary" style="text-decoration: none" href="#">Add comment</a></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="answers">
+            {% if question.answers|length > 0 %}
+                <p class="border-bottom m-0">{{ question.answers | length }} Answers</p>
+                {% for answer in question.answers %}
+                    <div id="{{ answer.id }}">
+                        <div class="d-flex">
+                            <div class="col-sm-1 d-flex flex-column text-center px-3">
+                                <button type="button" class="btn btn-light btn-lg p-0 my-2" onclick="updateAnswerVotes({{ answer.id }}, 'up')">
+                                    <i class="bi bi-arrow-up-circle"></i>
+                                </button>
+                                <p class="fs-4 m-0 text-center answer-likes-{{ answer.id }}">{{ answer.likes }}</p>
+                                <button type="button" class="btn btn-light btn-lg p-0 my-2" onclick="updateAnswerVotes({{ answer.id }}, 'down')">
+                                    <i class="bi bi-arrow-down-circle"></i>
+                                </button>
+                            </div>
+                            <div class="col-sm-11 px-2 pt-1">
+                                <p>{{ answer.text }}</p>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <div class="d-flex flex-column p-2">
+                                <small class="text-muted">answered {{ answer.created_at }}</small>
+                                <div class="d-flex flex-row align-items-center justify-content-start">
+                                    <img src="{% static question.user.img_path %}" class="rounded" alt="None" width="30" height="30">
+                                    <a class="nav-link" href="{% url 'profile' answer.user %}">{{ answer.user }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex pb-4">
+                            <div class="col-sm-1 d-flex flex-column text-center"></div>
+                            <div class="col-sm-11 border-top px-2">
+                                <small class="text-muted"><a class="link-secondary" style="text-decoration: none" href="#">Add comment</a></small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No one has answered this question. Be first!</p>
+            {% endif %}
+        </div>
+
+        {% if session.username %}
+            <div class="your_answer">
+                <p class="border-top pt-2">Your answer</p>
+                {% if error %}
+                    <p class="text-danger">Couldn't post your answer!</p>
+                {% endif %}
+                <form action="/question/{{ question.id }}" method="post" class="p-0">
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">Post your answer</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}

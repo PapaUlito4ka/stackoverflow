@@ -1,0 +1,45 @@
+<style>
+    a {
+        text-decoration: none;
+        color: #242ebb;
+    }
+</style>
+<div class="list-group-item flex-column border-bottom align-items-start">
+    <div class="container p-0">
+        <div class="row" onclick="window.location.href='question/{{ question.id }}'">
+            <div class="col-lg-3 d-flex align-items-center justify-content-between">
+                <div class="p-1">
+                    <span class="d-block text-center">{{ question.votes }}</span>
+                    <small class="text-muted">Votes</small>
+                </div>
+                <div class="p-1">
+                    <span class="d-block text-center">{{ question.answers }}</span>
+                    <small class="text-muted">Answers</small>
+                </div>
+                <div class="p-1">
+                    <span class="d-block text-center">{{ question.views }}</span>
+                    <small class="text-muted">Views</small>
+                </div>
+            </div>
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between">
+                    <h5 class="mb-1"><a href="#">{{ question.title }}</a></h5>
+                    <small class="text-muted">asked {{ question.created_at }}</small>
+                </div>
+                <p class="mb-1"><a href="#">{{ question.text | truncatewords:20 }}</a></p>
+                <div class="container p-0">
+                    <div class="row p-0">
+                        <div class="col-lg-10">
+                            {% for tag in question.tags %}
+                                <a class="btn btn-outline-info btn-sm" href="#" role="button">{{ tag.name }}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="col-lg-2 d-flex justify-content-end">
+                            <a href="#">{{ question.author }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
