@@ -1,5 +1,8 @@
 import requests
 import json
+
+from django.http import HttpRequest
+
 from stackoverflow.settings import SECRET_KEY
 import urllib
 
@@ -119,6 +122,21 @@ class User:
     def get_user_profile(username: str):
         url = BASE_URL + f'user/{username}/profile?tab=profile'
         response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
+
+    @staticmethod
+    def post_user_profile(request: HttpRequest, username: str, filename: str):
+        url = BASE_URL + f'user/{username}/profile'
+        data = json.dumps({
+            'img_path': filename,
+            'username': request.POST.get('username'),
+            'about': request.POST.get('about')
+        })
+        print(data)
+        response = requests.post(url, headers=header, data=data)
         return {
             'status_code': response.status_code,
             **response.json()

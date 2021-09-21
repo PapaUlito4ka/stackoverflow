@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from .forms import LoginForm, RegisterForm, QuestionForm, AnswerForm
+from .forms import LoginForm, RegisterForm, QuestionForm, AnswerForm, EditProfileForm
 from django.contrib import messages
 
 import core.handlers.responses as handlers
+from core.handlers.handlers import handle_uploaded_file
 from core.tests import QUESTIONS
 
 QUESTION_FILTERS = {
@@ -59,18 +60,19 @@ def register(request: HttpRequest):
             return render(request, 'core/register.html', {'form': form, 'login_error': None})
         return redirect(f'/profile/{request.session.get("username")}')
 
-
+@csrf_exempt
 def profile(request: HttpRequest, username, tab=None):
+    context = {
+        'session': request.session
+    }
+    tab = request.GET.get('tab', None)
     if request.method == 'GET':
-        context = {
-            'session': request.session
-        }
-        tab = request.GET.get('tab', None)
         if tab == 'profile':
             return handlers.UserRequests.user_profile(request, context, username)
         if tab in ('activity', 'summary'):
             return handlers.UserRequests.user_profile_activity(request, context, username)
         if tab == 'edit':
+            context['form'] = EditProfileForm()
             return handlers.UserRequests.user_profile_edit(request, context, username)
         if tab == 'answers':
             return handlers.UserRequests.user_profile_answers(request, context, username)
@@ -79,7 +81,13 @@ def profile(request: HttpRequest, username, tab=None):
         if tab == 'tags':
             return handlers.UserRequests.user_profile_tags(request, context, username)
         return handlers.UserRequests.user_profile(request, context, username)
-
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES)
+        context['filename'] = ''
+        if 'img_file' in request.FILES:
+            handle_uploaded_file(request.FILES['img_file'], request.FILES['img_file'].name)
+            context['filename'] = request.FILES['img_file'].name
+        return handlers.UserRequests.user_profile(request, context, username)
 
 def logout(request: HttpRequest):
     if request.method == 'GET' and 'username' in request.session:

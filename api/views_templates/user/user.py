@@ -77,9 +77,11 @@ def user_answers(request: HttpRequest, username):
         user_handlers.user_answers_get(request, username)
 
 @csrf_exempt
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'POST'])
 def user_profile(request: HttpRequest, username):
     if not check_token(request):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
     if request.method == 'GET':
         return user_handlers.user_profile_get(request, username, request.GET.get('tab', 'profile'))
+    if request.method == 'POST':
+        return user_handlers.user_profile_post(request, username)

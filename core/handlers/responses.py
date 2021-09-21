@@ -25,6 +25,8 @@ class UserRequests:
 
     @staticmethod
     def user_profile(request: HttpRequest, context, username):
+        if request.method == 'POST':
+            User.post_user_profile(request, username, context['filename'])
         response = User.get_user_profile(username)
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
@@ -40,6 +42,9 @@ class UserRequests:
     @staticmethod
     def user_profile_edit(request: HttpRequest, context, username):
         response = User.get_user_profile_edit(username)
+        context['form'].fields['username'].initial = response['data']['user']['username']
+        context['form'].fields['about'].initial = response['data']['user']['about']
+        context['form'].fields['img_file'].initial = response['data']['user']['img_path']
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
         return handle_profile(request, 'core/profile/edit.html', response, context)

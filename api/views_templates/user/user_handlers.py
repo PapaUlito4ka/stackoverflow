@@ -228,3 +228,23 @@ def user_profile_get(request: HttpRequest, username: str, tab: str):
         return HttpResponse(status=OK_STATUS, content=positive_response(serialized_data))
     except Exception as err:
         return HttpResponse(status=ERROR_STATUS, content=negative_response(err.__str__()))
+
+
+def user_profile_post(request: HttpRequest, username: str):
+    Json = UserJson(request.body)
+    try:
+        user = User.objects.get(username=username)
+        filtered_users = User.objects.filter(username=Json.username)
+        if len(filtered_users) == 0 or filtered_users[0].username == user.username:
+            user.username = Json.username
+        else:
+            raise Exception('User with given username already exists.')
+        user.about = Json.about
+        if Json.img_path != '':
+            user.img_path = Json.img_path
+        user.save()
+    except Exception as err:
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(err.__str__()))
+
+    serialized_data = model_to_dict(user)
+    return HttpResponse(status=OK_STATUS, content=positive_response(serialized_data))

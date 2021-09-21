@@ -44,3 +44,9 @@ def handle_question(request: HttpRequest, url: str, response: dict, context: dic
 def handle_questions(request: HttpRequest, url: str, response: dict, context: dict):
     context['questions'] = response['data']
     return render(request, url, context=context)
+
+
+def handle_uploaded_file(f, filename):
+    with open(f'/Users/viktormartahin/Documents/Projects/stackoverflow/static/images/{filename}', 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)

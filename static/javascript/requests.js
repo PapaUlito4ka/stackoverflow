@@ -32,3 +32,4 @@ function updateAnswerVotes (answer_id, selector) {
     })
 }
 
+
