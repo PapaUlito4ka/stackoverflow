@@ -42,7 +42,7 @@ def users(request: HttpRequest):
     if not check_token(request):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
     if request.method == 'GET':
-        return user_handlers.get_users(request)
+        return user_handlers.get_users(request, request.GET.get('page', '1'))
 
 @csrf_exempt
 @require_http_methods(['PUT'])

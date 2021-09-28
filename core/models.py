@@ -9,7 +9,7 @@ import json
 class User(models.Model):
     username = models.CharField(max_length=64, unique=True)
     password = models.CharField(max_length=128)
-    img_path = models.CharField(default='/images/anonymous.jpg', max_length=64)
+    img_path = models.CharField(default='anonymous.jpg', max_length=64)
     location = models.CharField(default='', max_length=64)
     title = models.CharField(default='', max_length=64)
     about = models.TextField(default='')

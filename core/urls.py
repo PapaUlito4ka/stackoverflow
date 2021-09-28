@@ -10,5 +10,6 @@ urlpatterns = [
     path('logout', views.logout, name='logout'),
     path('questions', views.questions, name='questions'),
     path('question/<int:question_id>', views.question, name='question'),
-    path('questions/ask', views.ask_question, name='ask_question')
+    path('questions/ask', views.ask_question, name='ask_question'),
+    path('users', views.users, name='users')
 ]

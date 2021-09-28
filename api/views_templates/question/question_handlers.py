@@ -92,7 +92,7 @@ def question_get(request: HttpRequest, question_id):
     serialized_question['answers'] = []
     for answer in sorted(question.answers, key=lambda obj: obj.likes, reverse=True):
         d = model_to_dict(answer)
-        d['user'] = User.objects.get(pk=int(d['user'])).username
+        d['user'] = model_to_dict(User.objects.get(pk=int(d['user'])))
         serialized_question['answers'].append(d)
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_question))
 

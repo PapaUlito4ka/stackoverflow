@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .forms import LoginForm, RegisterForm, QuestionForm, AnswerForm, EditProfileForm
 from django.contrib import messages
+from uuid import uuid4
+
 
 import core.handlers.responses as handlers
 from core.handlers.handlers import handle_uploaded_file
@@ -85,8 +87,10 @@ def profile(request: HttpRequest, username, tab=None):
         form = EditProfileForm(request.POST, request.FILES)
         context['filename'] = ''
         if 'img_file' in request.FILES:
-            handle_uploaded_file(request.FILES['img_file'], request.FILES['img_file'].name)
             context['filename'] = request.FILES['img_file'].name
+            idx = context['filename'].rindex('.')
+            context['filename'] = context['filename'][:idx] + f'_{uuid4()}' + context['filename'][idx:]
+            handle_uploaded_file(request.FILES['img_file'], context['filename'])
         return handlers.UserRequests.user_profile(request, context, username)
 
 def logout(request: HttpRequest):
@@ -142,4 +146,17 @@ def ask_question(request: HttpRequest):
         tags = request.POST.get('tags').strip().split(' ')
         user_id = request.session.get('id')
         return handlers.QuestionRequests.ask_question(request, title, body, tags, user_id, context)
+
+
+def users(request: HttpRequest):
+    context = {
+        'session': request.session
+    }
+    url_params = {
+        'page': request.GET.get('page', '1'),
+    }
+
+    if request.method == 'GET':
+        return handlers.UserRequests.get_users(request, context, url_params)
+
 

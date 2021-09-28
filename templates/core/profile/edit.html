@@ -23,7 +23,7 @@
                 <form method="post" action="/profile/{{ user.username }}" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-sm-4">
-                            <img src="{% static '' %}/images/{{ user.img_path }}" class="img-fluid rounded mb-2">
+                            <img src="{% static '' %}images/{{ user.img_path }}" class="img-fluid rounded mb-2">
                             <div class="input-group">
                                 {{ form.img_file }}
                             </div>

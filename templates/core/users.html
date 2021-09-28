@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+    <div class="col-sm-8 p-0 list-group-flush">
+        <h2>Users</h2>
+        <div class="row">
+            <div class="col-4">
+                <input name="userfilter" class="form-control" placeholder="Filter by user">
+            </div>
+            <div class="col-8"></div>
+        </div>
+        <div class="my-3 row row-cols-4">
+            {% for user in users %}
+                <div class="col mb-5 px-3">
+                    <div class="row">
+                        <div class="col-4">
+                            <img src="{% static '' %}images/{{ user.img_path }}" class="rounded" width="50" height="50">
+                        </div>
+                        <div class="col-8">
+                            <p class="fs-5 mx-1 m-0"><a href="/profile/{{ user.username }}">{{ user.username }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if nav_info.cur_page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="users/{{ nav_info.cur_page|add:"-1" }}">Prev</a>
+                    </li>
+                {% endif %}
+
+                {% if nav_info.cur_page != 1 %}
+                    <li class="page-item"><a class="page-link" href="users?page=1">1</a></li>
+                {% endif %}
+                {% if nav_info.cur_page > 2 %}
+                    <li class="page-item"><a class="page-link" href="#">...</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link" href="users?page{{ nav_info.cur_page }}">{{ nav_info.cur_page }}</a></li>
+                {% if nav_info.cur_page < nav_info.all_pages|add:"-2" %}
+                    <li class="page-item"><a class="page-link" href="#">...</a></li>
+                {% endif %}
+                {% if nav_info.cur_page != nav_info.all_pages %}
+                    <li class="page-item"><a class="page-link" href="users?page{{ nav_info.all_pages }}">{{ nav_info.all_pages }}</a></li>
+                {% endif %}
+
+                {% if nav_info.cur_page < nav_info.all_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="users?page={{ nav_info.cur_page|add:"1" }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <div class="col-sm-2"></div>
+{% endblock %}
+

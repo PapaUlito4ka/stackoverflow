@@ -28,7 +28,7 @@ def check_user_password(response: dict, pwd: str):
     return response['data']['password'] == pwd
 
 
-def handle_profile(request: HttpRequest, url: str, response: dict, context: dict):
+def handle_response(request: HttpRequest, url: str, response: dict, context: dict):
     context = {
         **context,
         **response['data']
@@ -46,7 +46,7 @@ def handle_questions(request: HttpRequest, url: str, response: dict, context: di
     return render(request, url, context=context)
 
 
-def handle_uploaded_file(f, filename):
+def handle_uploaded_file(f, filename: str):
     with open(f'/Users/viktormartahin/Documents/Projects/stackoverflow/static/images/{filename}', 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)

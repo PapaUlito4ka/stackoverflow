@@ -4,7 +4,7 @@ import json
 from django.http import HttpRequest
 
 from stackoverflow.settings import SECRET_KEY
-import urllib
+from urllib.parse import urlencode
 
 BASE_URL = 'http://localhost:8000/api/'
 header = {
@@ -28,8 +28,9 @@ class User:
         }
 
     @staticmethod
-    def get_users(page):
-        url = BASE_URL + 'users/{}'.format(page)
+    def get_users(url_params: dict):
+        url_params_str = urlencode(url_params)
+        url = BASE_URL + f'users?{url_params_str}'
         response = requests.get(url, headers=header)
         return {
             'status_code': response.status_code,
@@ -135,7 +136,6 @@ class User:
             'username': request.POST.get('username'),
             'about': request.POST.get('about')
         })
-        print(data)
         response = requests.post(url, headers=header, data=data)
         return {
             'status_code': response.status_code,

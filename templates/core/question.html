@@ -32,7 +32,7 @@
                 <div class="card d-flex flex-column p-2 bg-light">
                     <small class="text-muted">asked {{ question.created_at }}</small>
                     <div class="d-flex flex-row align-items-center justify-content-start">
-                        <img src="{% static question.user.img_path %}" class="rounded" alt="None" width="30" height="30">
+                        <img src="{% static '' %}images/{{ question.user.img_path }}" class="rounded" alt="None" width="30" height="30">
                         <a class="nav-link" href="{% url 'profile' question.user.username %}">{{ question.user.username }}</a>
                     </div>
                 </div>
@@ -68,8 +68,8 @@
                             <div class="d-flex flex-column p-2">
                                 <small class="text-muted">answered {{ answer.created_at }}</small>
                                 <div class="d-flex flex-row align-items-center justify-content-start">
-                                    <img src="{% static question.user.img_path %}" class="rounded" alt="None" width="30" height="30">
-                                    <a class="nav-link" href="{% url 'profile' answer.user %}">{{ answer.user }}</a>
+                                    <img src="{% static '' %}images/{{ answer.user.img_path }}" class="rounded" alt="None" width="30" height="30">
+                                    <a class="nav-link" href="{% url 'profile' answer.user.username %}">{{ answer.user.username }}</a>
                                 </div>
                             </div>
                         </div>
