@@ -4,6 +4,7 @@ from django.db.models import Prefetch, F, Count
 from django.forms.models import model_to_dict
 from django.core import exceptions
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from api.handle_response import UserJson, QuestionJson, AnswerJson, TagJson, UrlParamsDict
 from django.core.exceptions import ObjectDoesNotExist
@@ -72,6 +73,29 @@ def questions_get(request: HttpRequest):
         serialized_question[i]['user'] = q.user.username
         serialized_question[i]['answers'] = len(q.answers)
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_question))
+
+
+def questions_filter(request: HttpRequest, query: str):
+    p1 = Prefetch('tags')
+    p2 = Prefetch('user')
+    p3 = Prefetch('answer_set', to_attr='answers')
+    query_words = query.split('+')
+    big_query = Q()
+    if len(query_words) > 0:
+        big_query = Q(text__contains=query_words[0]) | Q(title__contains=query_words[0])
+        for i in range(1, len(query_words)):
+            big_query |= Q(text__contains=query_words[i]) | Q(title__contains=query_words[i])
+
+    filtered_questions = Question.objects.filter(big_query)
+    serialized_questions = dict()
+    serialized_questions['questions'] = [model_to_dict(question) for question in filtered_questions]
+    for i, question in enumerate(filtered_questions):
+        q = Question.objects.prefetch_related(p1, p2, p3).get(pk=question.pk)
+        serialized_questions['questions'][i]['tags'] = [model_to_dict(tag) for tag in q.tags.all()]
+        serialized_questions['questions'][i]['user'] = q.user.username
+        serialized_questions['questions'][i]['answers'] = len(q.answers)
+
+    return HttpResponse(status=OK_STATUS, content=positive_response(serialized_questions))
 
 
 ###########
@@ -231,34 +255,5 @@ def question_user_get(request: HttpRequest, question_id):
     serialized_user = model_to_dict(question.user)
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_user))
 
-# def question_answers_post(request: HttpRequest, question_id):
-#     try:
-#         p1 = Prefetch('answer_set', to_attr='answers')
-#         question = Question.prefetch_related(p1).objects.get(pk=question_id)
-#         question.answers.create(
-#             text=request.body['text'],
-#             question=question,
-#             user=request.body['user_id']
-#         )
-#     except ObjectDoesNotExist:
-#         return HttpResponse(status=ERROR_STATUS, content=negative_response('Question does not exist'))
-#     except IntegrityError:
-#         return HttpResponse(status=ERROR_STATUS, content=negative_response('Could not create answer'))
-#     serialized_question = model_to_dict(question)
-#     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_question))
 
-# def question_answers_put(request: HttpRequest, question_id):
-#     try:
-#         p1 = Prefetch('answer_set', to_attr='answers')
-#         question = Question.prefetch_related(p1).objects.get(pk=question_id)
-#         question.answers.update(
-#             text=request.body['text']
-#         )
-#     except ObjectDoesNotExist:
-#         return HttpResponse(status=ERROR_STATUS, content=negative_response('Question does not exist'))
-#     except IntegrityError:
-#         return HttpResponse(status=ERROR_STATUS, content=negative_response('Could not create answer'))
-#     serialized_question = model_to_dict(question)
-#     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_question))
 
-##############

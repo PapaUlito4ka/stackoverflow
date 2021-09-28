@@ -123,6 +123,12 @@ class QuestionRequests:
             return handle_error(request, 'base.html', response, context)
         return handle_questions(request, 'base.html', response, context)
 
+    @staticmethod
+    def search_question(request: HttpRequest, context: dict, url_params: dict):
+        response = Question.search_question(url_params)
+        if check_error(response):
+            return handle_error(request, 'core/not_found.html', response, context)
+        return handle_response(request, 'core/search.html', response, context)
 
 class AnswerRequests:
 

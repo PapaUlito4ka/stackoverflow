@@ -328,6 +328,15 @@ class Question:
             **response.json()
         }
 
+    @staticmethod
+    def search_question(url_params: dict):
+        url = BASE_URL + f'questions?{urlencode(url_params)}'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
+
 
 class Answer:
 

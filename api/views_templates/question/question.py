@@ -25,6 +25,8 @@ def create_question(request: HttpRequest):
 def questions(request: HttpRequest):
     if not check_token(request):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
+    if request.GET.get('q', None):
+        return question_handlers.questions_filter(request, request.GET.get('q', ''))
     return question_handlers.questions_get(request)
 
 @csrf_exempt

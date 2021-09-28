@@ -159,4 +159,15 @@ def users(request: HttpRequest):
     if request.method == 'GET':
         return handlers.UserRequests.get_users(request, context, url_params)
 
+def search(request: HttpRequest):
+    context = {
+        'sesssion': request.session
+    }
+    url_params = {
+        'q': request.GET.get('q', '')
+    }
+
+    if request.method == 'GET':
+        return handlers.QuestionRequests.search_question(request, context, url_params)
+
 

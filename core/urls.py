@@ -11,5 +11,6 @@ urlpatterns = [
     path('questions', views.questions, name='questions'),
     path('question/<int:question_id>', views.question, name='question'),
     path('questions/ask', views.ask_question, name='ask_question'),
-    path('users', views.users, name='users')
+    path('users', views.users, name='users'),
+    path('search', views.search, name='search')
 ]
