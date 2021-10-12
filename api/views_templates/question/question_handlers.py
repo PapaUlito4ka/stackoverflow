@@ -64,11 +64,9 @@ def questions_get(request: HttpRequest):
         questions = questions.order_by(url_params.order_by)
     if url_params.page:
         paginator = Paginator(questions, QUESTIONS_PER_PAGE)
-        serialized_question = [model_to_dict(question) for question in paginator.get_page(url_params.page).object_list]
-    else:
-        serialized_question = [model_to_dict(question) for question in questions]
-    for i, question in enumerate(questions):
-        q = Question.objects.prefetch_related(p1, p2, p3).get(pk=question.pk)
+        questions = paginator.get_page(url_params.page)
+    serialized_question = [model_to_dict(question) for question in questions]
+    for i, q in enumerate(questions):
         serialized_question[i]['tags'] = [model_to_dict(tag) for tag in q.tags.all()]
         serialized_question[i]['user'] = q.user.username
         serialized_question[i]['answers'] = len(q.answers)

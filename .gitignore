@@ -2,3 +2,6 @@ db.sqlite3
 manage.py
 .vscode
 stackoverflow/settings.py
+static/bootstrap
+static/icons-1.4.1
+static/jquery

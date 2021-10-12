@@ -466,6 +466,16 @@ class Tag:
         }
 
     @staticmethod
+    def get_tags(url_params: dict):
+        url_params_str = urlencode(url_params)
+        url = BASE_URL + f'tags?{url_params_str}'
+        response = requests.get(url, headers=header)
+        return {
+            'status_code': response.status_code,
+            **response.json()
+        }
+
+    @staticmethod
     def put_tag(id_, name):
         url = BASE_URL + 'tag/{}'.format(id_)
         data = json.dumps({

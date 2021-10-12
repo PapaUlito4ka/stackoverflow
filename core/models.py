@@ -1,18 +1,16 @@
 from django.db import models
-from django.core.validators import MaxLengthValidator
-from django.contrib.auth.hashers import check_password, make_password
-import datetime
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher as bc
 from django.utils.timezone import now
-import json
 
 
 class User(models.Model):
     username = models.CharField(max_length=64, unique=True)
     password = models.CharField(max_length=128)
-    img_path = models.CharField(default='anonymous.jpg', max_length=64)
+    img_path = models.CharField(default='images/anonymous.jpg', max_length=64)
     location = models.CharField(default='', max_length=64)
     title = models.CharField(default='', max_length=64)
     about = models.TextField(default='')
+    reputation = models.IntegerField(default=0)
 
     created_at = models.DateTimeField(default=now())
     updated_at = models.DateTimeField(auto_now=True)
@@ -23,25 +21,16 @@ class User(models.Model):
             user = User.objects.get(username=username)
         except:
             return False
-        if password == user.password:
-            return True
-        return False
+        return bc().verify(password, user.password)
 
-    def __setattr__(self, name, value):
-        if name != 'password':
-            return super().__setattr__(name, value)
-        self.salt = 12
-        self.plainPassword = value
-        return super().__setattr__(name, make_password(value))
-
-    def __getattribute__(self, name):
-        if name != 'password':
-            return super().__getattribute__(name)
-        return self.plainPassword
+    def set_hash_password(self, password: str):
+        hasher = bc()
+        self.password = hasher.encode(password, hasher.salt())
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=32, unique=True)
+    text = models.CharField(default='', max_length=256)
     count = models.IntegerField(default=1)
 
 
@@ -56,9 +45,6 @@ class Question(models.Model):
 
     created_at = models.DateTimeField(default=now())
     updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
 
 
 class Answer(models.Model):

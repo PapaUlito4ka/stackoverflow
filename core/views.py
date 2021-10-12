@@ -159,15 +159,32 @@ def users(request: HttpRequest):
     if request.method == 'GET':
         return handlers.UserRequests.get_users(request, context, url_params)
 
+@csrf_exempt
 def search(request: HttpRequest):
     context = {
         'sesssion': request.session
     }
+
+    if request.method == 'GET':
+        url_params = {
+            'q': request.GET.get('q', '')
+        }
+        return handlers.QuestionRequests.search_question(request, context, url_params)
+    if request.method == 'POST':
+        url_params = {
+            'q': request.POST.get('q', '')
+        }
+        return handlers.QuestionRequests.search_question(request, context, url_params)
+
+def tags(request: HttpRequest):
+    context = {
+        'session': request.session
+    }
     url_params = {
-        'q': request.GET.get('q', '')
+        'page': request.GET.get('page', '1')
     }
 
     if request.method == 'GET':
-        return handlers.QuestionRequests.search_question(request, context, url_params)
+        return handlers.TagRequests.get_tags(request, context, url_params)
 
 

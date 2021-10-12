@@ -35,9 +35,9 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'index' %}">Stackoverflow</a>
         <div class="container-fluid" style='margin-top: 10px;'>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search for question..." aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+          <form class="d-flex" method="post" action="/search">
+            <input class="form-control me-2" name="q" type="search" placeholder="Search for question..." aria-label="Search">
+{#            <button class="btn btn-outline-success" type="submit">Search</button>#}
           </form>
         </div>
         <div class="d-flex justify-content-end" id="navbarNav">

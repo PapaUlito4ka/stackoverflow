@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.core.serializers import serialize
 from django.http import HttpResponse, HttpRequest
 from django.core import exceptions
@@ -30,6 +31,29 @@ def tag_create(request: HttpRequest):
         return HttpResponse(status=ERROR_STATUS, content=negative_response('Tag already exists'))
     tag_serialized = model_to_dict(tag)
     return HttpResponse(status=OK_STATUS, content=positive_response(tag_serialized))
+
+# TAGS
+
+def tags_get(request: HttpRequest, page_num: str):
+    tags_per_page = 36
+    tags = list(
+        Tag.objects.all()
+            .order_by('-count')
+    )
+    paginator = Paginator(tags, tags_per_page)
+    try:
+        page = paginator.page(page_num)
+    except:
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
+    tags_serialized = dict()
+    tags_serialized['tags'] = [model_to_dict(tag) for tag in tags]
+    tags_serialized['nav_info'] = {
+        'cur_page': int(page_num),
+        'all_pages': len(tags) // tags_per_page + 1
+    }
+    return HttpResponse(status=OK_STATUS, content=positive_response(tags_serialized))
+
+###############
 
 ###############
 

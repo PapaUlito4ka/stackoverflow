@@ -36,7 +36,7 @@ urlpatterns = [
     path('answer/<int:answer_id>/user', answer_view.answer_user),
 
     path('tag/create', tag_view.create_tag),
-    path('tags/<int:page_id>', tag_view.create_tag),
+    path('tags/', tag_view.tags),
     path('tag/<str:tag_name>', tag_view.tag),
     path('tag/<str:tag_name>/count', tag_view.tag_count),
     path('tag/<str:tag_name>/questions', tag_view.tag_questions),

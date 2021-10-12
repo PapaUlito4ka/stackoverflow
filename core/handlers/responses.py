@@ -150,6 +150,13 @@ class TagRequests:
     def get_tag(request: HttpRequest, context: dict, tag_name: str):
         pass
 
+    @staticmethod
+    def get_tags(request: HttpRequest, context: dict, url_params: dict):
+        response = Tag.get_tags(url_params)
+        if check_error(response):
+            handle_error(request, 'core/not_found.html', response, context)
+        return handle_response(request, 'core/tags.html', response, context)
+
 
 
 

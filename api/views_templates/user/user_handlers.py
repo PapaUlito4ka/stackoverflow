@@ -28,7 +28,7 @@ def get_users(request: HttpRequest, page: str):
     except Exception as e:
         return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
     users_serialized = dict()
-    users_serialized['users'] = [model_to_dict(user, exclude=['password']) for user in users_page]
+    users_serialized['users'] = [model_to_dict(user) for user in users_page]
     users_serialized['nav_info'] = {
         'cur_page': int(page),
         'all_pages': len(users) // users_per_page + 1
@@ -39,17 +39,19 @@ def get_users(request: HttpRequest, page: str):
 
 # USER
 
+
 def users_create(request: HttpRequest):
     Json = UserJson(request.body)
     try:
-        user = User.objects.create(
-            username=Json.username,
-            password=Json.password
-        )
+        user = User()
+        user.username = Json.username
+        user.set_hash_password(Json.password)
+        user.save()
     except IntegrityError:
         return HttpResponse(status=ERROR_STATUS, content=negative_response('User already exist'))
     user_serialized = model_to_dict(user)
     return HttpResponse(status=OK_STATUS, content=positive_response(user_serialized))
+
 
 def user_get(request: HttpRequest, username):
     try:
@@ -67,18 +69,19 @@ def user_get(request: HttpRequest, username):
             serialized_user['questions'][i]['tags'].append(model_to_dict(tag))
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_user))
 
+
 def user_put(request: HttpRequest, username):
     Json = UserJson(request.body)
     try:
         user = User.objects.get(username=username)
-        user.update(
-            username=Json.username,
-            password=Json.password,
-            img_path=Json.img_path,
-            location=Json.location,
-            title=Json.title,
-            about=Json.about
-        )
+        user.username = Json.username
+        user.set_hash_password(Json.password)
+        user.img_path = Json.img_path
+        user.location = Json.location
+        user.title = Json.title
+        user.about = Json.about
+        user.reputation = Json.reputation
+        user.save()
     except ObjectDoesNotExist:
         return HttpResponse(status=ERROR_STATUS, content=negative_response('User wasn\'t found'))
     except Exception:
@@ -128,7 +131,7 @@ def user_password_put(request: HttpRequest, username):
     Json = UserJson(request.body)
     try:
         user = User.objects.get(username=username)
-        user.update(password=Json.password)
+        user.set_hash_password(Json.password)
     except ObjectDoesNotExist:
         return HttpResponse(status=ERROR_STATUS, content=negative_response('User wasn\'t found'))
     except Exception as e:
@@ -194,6 +197,12 @@ def user_profile_get(request: HttpRequest, username: str, tab: str):
                 serialized_data['questions'].append(q_d)
             serialized_data['answers'] = [model_to_dict(answer) for answer in answers]
             serialized_data['tags'] = [model_to_dict(tag) for tag in tags]
+            serialized_data['stats'] = {
+                'reputation': user.reputation,
+                'answers': len(user.answer_set.all()),
+                'questions': len(user.question_set.all()),
+                'reached': 1
+            }
         elif tab == 'answers':
             user = User.objects.get(username=username)
             answers = Answer.objects\
@@ -249,6 +258,5 @@ def user_profile_post(request: HttpRequest, username: str):
         user.save()
     except Exception as err:
         return HttpResponse(status=ERROR_STATUS, content=negative_response(err.__str__()))
-
     serialized_data = model_to_dict(user)
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_data))

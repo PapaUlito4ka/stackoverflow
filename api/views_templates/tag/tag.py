@@ -31,6 +31,14 @@ def tag(request: HttpRequest, tag_name):
         return tag_handlers.tag_delete(request, tag_name)
 
 @csrf_exempt
+@require_http_methods(['GET'])
+def tags(request: HttpRequest):
+    if not check_token(request):
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
+    if request.method == 'GET':
+        return tag_handlers.tags_get(request, request.GET.get('page', '1'))
+
+@csrf_exempt
 @require_http_methods(['GET', 'PUT'])
 def tag_count(request: HttpRequest, tag_name):
     if not check_token(request):
@@ -47,3 +55,12 @@ def tag_questions(request: HttpRequest, tag_name):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
     if request.method == 'GET':
         tag_handlers.tag_questions_get(request, tag_name)
+
+
+
+
+
+
+
+
+

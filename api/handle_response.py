@@ -16,6 +16,7 @@ class UserJson:
         self.location = self.json.get('location', None)
         self.title = self.json.get('title', None)
         self.about = self.json.get('about', None)
+        self.reputation = self.json.get('reputation', None)
         self.questions = self.json.get('questions', None)
         self.answers = self.json.get('answers', None)
         self.created = self.json.get('created', None)
