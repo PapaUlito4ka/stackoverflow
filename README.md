@@ -1,2 +1,2 @@
 # stackoverflow
-home project of stackoverflow clone
+Django Python home project of Stackoverflow clone
