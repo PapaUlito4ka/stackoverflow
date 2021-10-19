@@ -11,6 +11,7 @@ from api.views_templates.tag import tag as tag_view
 urlpatterns = [
     path('question/create', question_view.create_question),
     path('questions/', question_view.questions),
+    path('questions/search', question_view.questions_search),
     path('question/<int:question_id>', question_view.question),
     path('question/<int:question_id>/votes', question_view.question_votes),
     path('question/<int:question_id>/views', question_view.question_views),

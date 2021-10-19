@@ -62,36 +62,56 @@ def questions_get(request: HttpRequest):
     questions = questions.filter(**url_params.filter_dict)
     if url_params.order_by:
         questions = questions.order_by(url_params.order_by)
-    if url_params.page:
-        paginator = Paginator(questions, QUESTIONS_PER_PAGE)
-        questions = paginator.get_page(url_params.page)
-    serialized_question = [model_to_dict(question) for question in questions]
+    try:
+        if url_params.page:
+            paginator = Paginator(questions, QUESTIONS_PER_PAGE)
+            questions = paginator.page(url_params.page)
+    except Exception as e:
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
+    serialized_question = dict()
+    serialized_question['questions'] = [model_to_dict(question) for question in questions]
     for i, q in enumerate(questions):
-        serialized_question[i]['tags'] = [model_to_dict(tag) for tag in q.tags.all()]
-        serialized_question[i]['user'] = q.user.username
-        serialized_question[i]['answers'] = len(q.answers)
+        serialized_question['questions'][i]['tags'] = [model_to_dict(tag) for tag in q.tags.all()]
+        serialized_question['questions'][i]['user'] = q.user.username
+        serialized_question['questions'][i]['answers'] = len(q.answers)
+    serialized_question['nav_info'] = {
+        'cur_page': int(url_params.page),
+        'all_pages': len(questions) // QUESTIONS_PER_PAGE + (not len(questions) % QUESTIONS_PER_PAGE == 0)
+    }
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_question))
 
 
-def questions_filter(request: HttpRequest, query: str):
+def questions_search(request: HttpRequest):
     p1 = Prefetch('tags')
     p2 = Prefetch('user')
     p3 = Prefetch('answer_set', to_attr='answers')
-    query_words = query.split('+')
+
+    query = request.GET.get('q', '')
+    tags = request.GET.get('tags', '')
+    user = request.GET.get('user', '')
+
+    query_words = query.split(' ') if query else []
+    query_tags = tags.split(' ') if tags else []
+    query_user = user
+
     big_query = Q()
     if len(query_words) > 0:
-        big_query = Q(text__contains=query_words[0]) | Q(title__contains=query_words[0])
-        for i in range(1, len(query_words)):
-            big_query |= Q(text__contains=query_words[i]) | Q(title__contains=query_words[i])
+        for i in range(len(query_words)):
+            big_query |= Q(text__icontains=query_words[i]) | Q(title__icontains=query_words[i])
+    if len(query_tags) > 0:
+        for i in range(len(query_tags)):
+            big_query |= Q(tags__name=query_tags[i])
+    if len(query_user) > 0:
+        big_query |= Q(user__username=query_user)
 
-    filtered_questions = Question.objects.filter(big_query)
+    filtered_questions = Question.objects.prefetch_related(p1, p2, p3).filter(big_query)
+
     serialized_questions = dict()
     serialized_questions['questions'] = [model_to_dict(question) for question in filtered_questions]
     for i, question in enumerate(filtered_questions):
-        q = Question.objects.prefetch_related(p1, p2, p3).get(pk=question.pk)
-        serialized_questions['questions'][i]['tags'] = [model_to_dict(tag) for tag in q.tags.all()]
-        serialized_questions['questions'][i]['user'] = q.user.username
-        serialized_questions['questions'][i]['answers'] = len(q.answers)
+        serialized_questions['questions'][i]['tags'] = [model_to_dict(tag) for tag in question.tags.all()]
+        serialized_questions['questions'][i]['user'] = question.user.username
+        serialized_questions['questions'][i]['answers'] = len(question.answers)
 
     return HttpResponse(status=OK_STATUS, content=positive_response(serialized_questions))
 
@@ -157,8 +177,15 @@ def question_votes_get(request: HttpRequest, question_id):
 def question_votes_put(request: HttpRequest, question_id):
     Json = QuestionJson(request.body)
     try:
-        question = Question.objects.get(pk=question_id)
+        p1 = Prefetch('user')
+        question = Question.objects.prefetch_related(p1).get(pk=question_id)
+        user = question.user
+        if question.votes < Json.votes:
+            user.reputation += 1
+        else:
+            user.reputation -= 1
         question.votes = Json.votes
+        user.save()
         question.save()
     except ObjectDoesNotExist:
         return HttpResponse(status=ERROR_STATUS, content=negative_response('Question does not exist'))

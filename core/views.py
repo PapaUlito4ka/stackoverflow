@@ -24,7 +24,9 @@ def home(request: HttpRequest):
         'session': request.session
     }
     url_params = {
-        'page': request.GET.get('page', 0)
+        'page': request.GET.get('page', 1),
+        'order_by': QUESTION_FILTERS[request.GET.get('sort', 'Newest')],
+
     }
     return handlers.QuestionRequests.home_page(request, context, url_params)
 
@@ -108,7 +110,7 @@ def questions(request: HttpRequest):
         'session': request.session
     }
     url_params = {
-        'page': request.GET.get('page', 0),
+        'page': request.GET.get('page', 1),
         'order_by': QUESTION_FILTERS[request.GET.get('sort', 'Newest')],
         'answers_len' + ('__gte' if request.GET.get('filter', 'HasAnswers') != 'NoAnswers' else ''): 0
     }
@@ -167,13 +169,18 @@ def search(request: HttpRequest):
 
     if request.method == 'GET':
         url_params = {
-            'q': request.GET.get('q', '')
+            'q': request.GET.get('q', ''),
+            'tags': request.GET.get('tags', ''),
+            'user': request.GET.get('user', '')
         }
         return handlers.QuestionRequests.search_question(request, context, url_params)
     if request.method == 'POST':
         url_params = {
-            'q': request.POST.get('q', '')
+            'q': request.POST.get('q', ''),
+            'tags': request.POST.get('tags', ''),
+            'user': request.POST.get('user', '')
         }
+
         return handlers.QuestionRequests.search_question(request, context, url_params)
 
 def tags(request: HttpRequest):

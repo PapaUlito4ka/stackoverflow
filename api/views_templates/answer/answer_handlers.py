@@ -115,8 +115,15 @@ def answer_likes_get(request: HttpRequest, answer_id):
 def answer_likes_put(request: HttpRequest, answer_id):
     Json = AnswerJson(request.body)
     try:
-        answer = Answer.objects.get(pk=answer_id)
+        p1 = Prefetch('user')
+        answer = Answer.objects.prefetch_related(p1).get(pk=answer_id)
+        user = answer.user
+        if answer.likes < Json.likes:
+            user.reputation += 1
+        else:
+            user.reputation -= 1
         answer.likes = Json.likes
+        user.save()
         answer.save()
     except ObjectDoesNotExist:
         return HttpResponse(status=ERROR_STATUS, context=negative_response('Answer does not exist'))

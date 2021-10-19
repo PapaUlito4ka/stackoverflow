@@ -40,12 +40,12 @@
                 {% if nav_info.cur_page > 2 %}
                     <li class="page-item"><a class="page-link" href="#">...</a></li>
                 {% endif %}
-                <li class="page-item active"><a class="page-link" href="users?page{{ nav_info.cur_page }}">{{ nav_info.cur_page }}</a></li>
+                <li class="page-item active"><a class="page-link" href="users?page={{ nav_info.cur_page }}">{{ nav_info.cur_page }}</a></li>
                 {% if nav_info.cur_page < nav_info.all_pages|add:"-2" %}
                     <li class="page-item"><a class="page-link" href="#">...</a></li>
                 {% endif %}
                 {% if nav_info.cur_page != nav_info.all_pages %}
-                    <li class="page-item"><a class="page-link" href="users?page{{ nav_info.all_pages }}">{{ nav_info.all_pages }}</a></li>
+                    <li class="page-item"><a class="page-link" href="users?page={{ nav_info.all_pages }}">{{ nav_info.all_pages }}</a></li>
                 {% endif %}
 
                 {% if nav_info.cur_page < nav_info.all_pages %}

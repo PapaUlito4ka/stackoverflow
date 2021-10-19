@@ -330,7 +330,7 @@ class Question:
 
     @staticmethod
     def search_question(url_params: dict):
-        url = BASE_URL + f'questions?{urlencode(url_params)}'
+        url = BASE_URL + f'questions/search?{urlencode(url_params)}'
         response = requests.get(url, headers=header)
         return {
             'status_code': response.status_code,

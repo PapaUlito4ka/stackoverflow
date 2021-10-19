@@ -18,6 +18,35 @@
         {% for question in questions %}
         {% include "../includes/question_template.html" %}
         {% endfor %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if nav_info.cur_page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="questions/{{ nav_info.cur_page|add:"-1" }}">Prev</a>
+                    </li>
+                {% endif %}
+
+                {% if nav_info.cur_page != 1 %}
+                    <li class="page-item"><a class="page-link" href="questions?page=1">1</a></li>
+                {% endif %}
+                {% if nav_info.cur_page > 2 %}
+                    <li class="page-item"><a class="page-link" href="#">...</a></li>
+                {% endif %}
+                <li class="page-item active"><a class="page-link" href="questions?page={{ nav_info.cur_page }}">{{ nav_info.cur_page }}</a></li>
+                {% if nav_info.cur_page < nav_info.all_pages|add:"-2" %}
+                    <li class="page-item"><a class="page-link" href="#">...</a></li>
+                {% endif %}
+                {% if nav_info.cur_page != nav_info.all_pages %}
+                    <li class="page-item"><a class="page-link" href="questions?page={{ nav_info.all_pages }}">{{ nav_info.all_pages }}</a></li>
+                {% endif %}
+
+                {% if nav_info.cur_page < nav_info.all_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="tag?page={{ nav_info.cur_page|add:"1" }}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
     <div class="col-sm-2"></div>
 {% endblock %}

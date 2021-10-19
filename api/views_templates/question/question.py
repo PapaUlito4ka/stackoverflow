@@ -25,9 +25,8 @@ def create_question(request: HttpRequest):
 def questions(request: HttpRequest):
     if not check_token(request):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
-    if request.GET.get('q', None):
-        return question_handlers.questions_filter(request, request.GET.get('q', ''))
-    return question_handlers.questions_get(request)
+    if request.method == 'GET':
+        return question_handlers.questions_get(request)
 
 @csrf_exempt
 @require_http_methods(['GET', 'PUT', 'DELETE'])
@@ -94,3 +93,10 @@ def question_user(request: HttpRequest, question_id):
         return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
     if request.method == 'GET':
         question_handlers.question_user_get(request, question_id)
+
+@csrf_exempt
+@require_http_methods(['GET'])
+def questions_search(request: HttpRequest):
+    if not check_token(request):
+        return HttpResponse(status=ERROR_STATUS, content=negative_response(WRONG_TOKEN))
+    return question_handlers.questions_search(request)

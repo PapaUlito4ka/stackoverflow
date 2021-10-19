@@ -106,7 +106,7 @@ class QuestionRequests:
         response = Question.get_questions(params_str)
         if check_error(response):
             return handle_error(request, 'core/not_found.html', response, context)
-        return handle_questions(request, 'core/questions.html', response, context)
+        return handle_response(request, 'core/questions.html', response, context)
 
     @staticmethod
     def ask_question(request: HttpRequest, title, body, tags, user_id, context):
@@ -120,8 +120,8 @@ class QuestionRequests:
         params_str = urlencode(url_params)
         response = Question.get_questions(params_str)
         if check_error(response):
-            return handle_error(request, 'base.html', response, context)
-        return handle_questions(request, 'base.html', response, context)
+            return handle_error(request, 'core/not_found.html', response, context)
+        return handle_response(request, 'base.html', response, context)
 
     @staticmethod
     def search_question(request: HttpRequest, context: dict, url_params: dict):

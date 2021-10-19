@@ -35,7 +35,7 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'index' %}">Stackoverflow</a>
         <div class="container-fluid" style='margin-top: 10px;'>
-          <form class="d-flex" method="post" action="/search">
+          <form class="d-flex" method="get" action="/search">
             <input class="form-control me-2" name="q" type="search" placeholder="Search for question..." aria-label="Search">
 {#            <button class="btn btn-outline-success" type="submit">Search</button>#}
           </form>
@@ -66,34 +66,63 @@
 
 
     <main role="main" class="container">
-            <div class="container">
-              <div class="row">
-                <div class="col-sm-2 p-0 d-flex justify-content-center">
-                  <div class="list-group position-fixed list-group-flush">
-                    <a href="/" class="list-group-item list-group-item-action">Home</a>
-                    <a href="/questions" class="list-group-item list-group-item-action">All questions</a>
-                    <a href="/tags" class="list-group-item list-group-item-action">Tags</a>
-                    <a href="/users" class="list-group-item list-group-item-action">Users</a>
-                  </div>
-                </div>
-                {% block content %}
-                  <div class="col-sm-8 p-0 list-group-flush">
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <h2>Top Questions</h2>
-                      </div>
-                      <div class="col-lg-6 d-flex align-items-center justify-content-end">
-                        <a href="{% url 'ask_question' %}" class="btn btn-primary">Ask question</a>
-                      </div>
-                    </div>
-                    {% for question in questions %}
-                      {% include "includes/question_template.html" %}
-                    {% endfor %}
-                  </div>
-                  <div class="col-sm-2"></div>
-                {% endblock %}
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-2 p-0 d-flex justify-content-center">
+              <div class="list-group position-fixed list-group-flush">
+                <a href="/" class="list-group-item list-group-item-action">Home</a>
+                <a href="/questions" class="list-group-item list-group-item-action">All questions</a>
+                <a href="/tags" class="list-group-item list-group-item-action">Tags</a>
+                <a href="/users" class="list-group-item list-group-item-action">Users</a>
               </div>
             </div>
+            {% block content %}
+              <div class="col-sm-8 p-0 list-group-flush">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <h2>Top Questions</h2>
+                  </div>
+                  <div class="col-lg-6 d-flex align-items-center justify-content-end">
+                    <a href="{% url 'ask_question' %}" class="btn btn-primary">Ask question</a>
+                  </div>
+                </div>
+                {% for question in questions %}
+                  {% include "includes/question_template.html" %}
+                {% endfor %}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                    {% if nav_info.cur_page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="/{{ nav_info.cur_page|add:"-1" }}">Prev</a>
+                        </li>
+                    {% endif %}
+
+                    {% if nav_info.cur_page != 1 %}
+                        <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                    {% endif %}
+                    {% if nav_info.cur_page > 2 %}
+                        <li class="page-item"><a class="page-link" href="#">...</a></li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ nav_info.cur_page }}">{{ nav_info.cur_page }}</a></li>
+                    {% if nav_info.cur_page < nav_info.all_pages|add:"-2" %}
+                        <li class="page-item"><a class="page-link" href="#">...</a></li>
+                    {% endif %}
+                    {% if nav_info.cur_page != nav_info.all_pages %}
+                        <li class="page-item"><a class="page-link" href="?page={{ nav_info.all_pages }}">{{ nav_info.all_pages }}</a></li>
+                    {% endif %}
+
+                    {% if nav_info.cur_page < nav_info.all_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="tag?page={{ nav_info.cur_page|add:"1" }}">Next</a>
+                    </li>
+                    {% endif %}
+                    </ul>
+                </nav>
+              </div>
+              <div class="col-sm-2"></div>
+            {% endblock %}
+          </div>
+        </div>
     </main>
 </body>
 </html>

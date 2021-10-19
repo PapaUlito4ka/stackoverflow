@@ -31,11 +31,11 @@
                     <div class="row p-0">
                         <div class="col-lg-10">
                             {% for tag in question.tags %}
-                                <a class="btn btn-outline-info btn-sm" href="#" role="button">{{ tag.name }}</a>
+                                <a class="btn btn-outline-info btn-sm" href="/search?tags={{ tag.name|urlencode }}" role="button">{{ tag.name }}</a>
                             {% endfor %}
                         </div>
                         <div class="col-lg-2 d-flex justify-content-end">
-                            <a href="#">{{ question.author }}</a>
+                            <a href="#">{{ question.user }}</a>
                         </div>
                     </div>
                 </div>
