@@ -12,7 +12,54 @@
             </div>
             <div class="col-lg-6 d-flex flex-column align-items-end justify-content-end">
                 <a href="{% url 'ask_question' %}" class="btn btn-primary mb-2">Ask question</a>
-                <a href="#" class="btn btn-secondary">Filters</a>
+                <a class="btn btn-secondary search-filter-button" onclick="filterSearchDropdown()">Filters</a>
+            </div>
+            <div class="search-filters mt-3" hidden="true">
+                <form class="search-form">
+                    <div class="flex card p-3">
+                        <div class="row flex-row border-bottom">
+                            <div class="col-6">
+                                <h3 class="cm-strong">Sort by</h3>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="sortRadio" id="newest" value="Newest" checked>
+                                    <label class="form-check-label" for="newest">
+                                        Newest
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="sortRadio" value="MostFrequent" id="mostFrequent">
+                                    <label class="form-check-label" for="mostFrequent">
+                                        Most frequent
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="sortRadio" value="MostVotes" id="mostVotes">
+                                    <label class="form-check-label" for="mostVotes">
+                                        Most votes
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h3 class="cm-strong">Filter by</h3>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answersRadio" id="hasAnswers" value="HasAnswers" checked>
+                                    <label class="form-check-label" for="hasAnswers">
+                                        Has Answers
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answersRadio" id="noAnswers" value="NoAnswers">
+                                    <label class="form-check-label" for="noAnswers">
+                                        No Answers
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-primary mt-2" onclick="applySearchFilters()">Apply filters</a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         {% for question in questions %}

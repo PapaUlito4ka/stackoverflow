@@ -19,18 +19,25 @@ OK_STATUS = 200
 
 # USERS
 
-def get_users(request: HttpRequest, page: str):
+def get_users(request: HttpRequest, page_num: str):
     users_per_page = 36
-    users = list(User.objects.all())
+
+    username = request.GET.get('username', '')
+
+    if username:
+        users = list(User.objects.filter(username__icontains=username))
+    else:
+        users = list(User.objects.all())
+
     paginator = Paginator(users, users_per_page)
     try:
-        users_page = paginator.page(page)
+        page = paginator.page(page_num)
     except Exception as e:
         return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
     users_serialized = dict()
-    users_serialized['users'] = [model_to_dict(user) for user in users_page]
+    users_serialized['users'] = [model_to_dict(user) for user in page]
     users_serialized['nav_info'] = {
-        'cur_page': int(page),
+        'cur_page': int(page_num),
         'all_pages': len(users) // users_per_page + 1
     }
     return HttpResponse(status=OK_STATUS, content=positive_response(users_serialized))

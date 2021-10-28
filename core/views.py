@@ -156,6 +156,7 @@ def users(request: HttpRequest):
     }
     url_params = {
         'page': request.GET.get('page', '1'),
+        'username': request.GET.get('username', '')
     }
 
     if request.method == 'GET':
@@ -164,21 +165,25 @@ def users(request: HttpRequest):
 @csrf_exempt
 def search(request: HttpRequest):
     context = {
-        'sesssion': request.session
+        'session': request.session
     }
 
     if request.method == 'GET':
         url_params = {
             'q': request.GET.get('q', ''),
             'tags': request.GET.get('tags', ''),
-            'user': request.GET.get('user', '')
+            'user': request.GET.get('user', ''),
+            'sort': request.GET.get('sort', ''),
+            'filter': request.GET.get('filter', '')
         }
         return handlers.QuestionRequests.search_question(request, context, url_params)
     if request.method == 'POST':
         url_params = {
             'q': request.POST.get('q', ''),
             'tags': request.POST.get('tags', ''),
-            'user': request.POST.get('user', '')
+            'user': request.POST.get('user', ''),
+            'sort': request.GET.get('sort', ''),
+            'filter': request.GET.get('filter', '')
         }
 
         return handlers.QuestionRequests.search_question(request, context, url_params)
@@ -188,7 +193,8 @@ def tags(request: HttpRequest):
         'session': request.session
     }
     url_params = {
-        'page': request.GET.get('page', '1')
+        'page': request.GET.get('page', '1'),
+        'tag_name': request.GET.get('tag_name', '')
     }
 
     if request.method == 'GET':

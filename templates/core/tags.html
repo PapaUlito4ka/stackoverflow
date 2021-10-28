@@ -8,7 +8,9 @@
         <h2>Tags</h2>
         <div class="row">
             <div class="col-4">
-                <input name="tagfilter" class="form-control" placeholder="Filter by tag">
+                <form method="get" action="/tags">
+                    <input name="tag_name" class="form-control" placeholder="Filter by tag">
+                </form>
             </div>
             <div class="col-8"></div>
         </div>

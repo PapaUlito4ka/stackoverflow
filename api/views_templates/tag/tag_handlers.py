@@ -36,17 +36,21 @@ def tag_create(request: HttpRequest):
 
 def tags_get(request: HttpRequest, page_num: str):
     tags_per_page = 36
-    tags = list(
-        Tag.objects.all()
-            .order_by('-count')
-    )
+
+    tag_name = request.GET.get('tag_name', '')
+
+    if tag_name:
+        tags = list(Tag.objects.filter(name__icontains=tag_name).order_by('-count'))
+    else:
+        tags = list(Tag.objects.all().order_by('-count'))
+
     paginator = Paginator(tags, tags_per_page)
     try:
         page = paginator.page(page_num)
     except:
         return HttpResponse(status=ERROR_STATUS, content=negative_response(e.__str__()))
     tags_serialized = dict()
-    tags_serialized['tags'] = [model_to_dict(tag) for tag in tags]
+    tags_serialized['tags'] = [model_to_dict(tag) for tag in page]
     tags_serialized['nav_info'] = {
         'cur_page': int(page_num),
         'all_pages': len(tags) // tags_per_page + 1

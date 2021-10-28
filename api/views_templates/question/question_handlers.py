@@ -89,6 +89,8 @@ def questions_search(request: HttpRequest):
     query = request.GET.get('q', '')
     tags = request.GET.get('tags', '')
     user = request.GET.get('user', '')
+    sort = request.GET.get('sort', '')
+    filter_ = request.GET.get('filter', '')
 
     query_words = query.split(' ') if query else []
     query_tags = tags.split(' ') if tags else []
@@ -103,8 +105,29 @@ def questions_search(request: HttpRequest):
             big_query |= Q(tags__name=query_tags[i])
     if len(query_user) > 0:
         big_query |= Q(user__username=query_user)
+    if sort:
+        if sort == 'Newest':
+            sort = '-created_at'
+        elif sort == 'MostVotes':
+            sort = '-votes'
+        elif sort == 'MostFrequent':
+            sort = '-views'
+        else:
+            sort = '-created_at'
+    if filter_:
+        if filter_ == 'HasAnswers':
+            big_query |= Q(answer__isnull=False)
+        elif filter_ == 'NoAnswers':
+            big_query |= Q(answer__isnull=True)
+        else:
+            big_query |= Q(answer__isnull=False)
 
-    filtered_questions = Question.objects.prefetch_related(p1, p2, p3).filter(big_query)
+
+    filtered_questions = Question.objects.prefetch_related(p1, p2, p3)\
+        .filter(big_query)
+
+    if sort:
+        filtered_questions = filtered_questions.order_by(sort)
 
     serialized_questions = dict()
     serialized_questions['questions'] = [model_to_dict(question) for question in filtered_questions]
